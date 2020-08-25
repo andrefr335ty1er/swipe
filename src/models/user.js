@@ -32,6 +32,13 @@ const userSchema = new mongoose.Schema({
             }
         }
     },
+    mobileNum: {
+        type: String,
+        trim: true,
+        validate: /01\d{8,9}/,
+        unique: true,
+        required: true
+    },
     age: {
         type: Number,
         default: 0,
@@ -52,6 +59,12 @@ const userSchema = new mongoose.Schema({
     }
 }, {
     timestamps: true
+})
+
+userSchema.virtual('gangs', {
+    ref: 'Gang',
+    localField: '_id',
+    foreignField: 'members'
 })
 
 
@@ -102,7 +115,6 @@ userSchema.pre('save', async function (next) {
 
     next()
 })
-
 
 const User = mongoose.model('User', userSchema)
 

@@ -4,6 +4,7 @@ const sharp = require('sharp')
 const User = require('../models/user')
 const auth = require('../middleware/auth')
 const { sendWelcomeEmail, sendCancelationEmail } = require('../emails/account')
+const mongooseErrorHandler = require('mongoose-error-handler');
 const router = new express.Router()
 
 router.post('/v1/users', async (req, res) => {
@@ -21,10 +22,12 @@ router.post('/v1/users', async (req, res) => {
 
 router.post('/v1/users/login', async (req, res) => {
     try {
+        
         const user = await User.findByCredentials(req.body.email, req.body.password)
         const token = await user.generateAuthToken()
+        console.log(user + "" + token)
         res.send({ user, token })
-    } catch (e) {
+    }catch (e) {
         res.status(400).send()
     }
 })

@@ -7,6 +7,7 @@ const { sendWelcomeEmail, sendCancelationEmail } = require('../emails/account')
 const mongooseErrorHandler = require('mongoose-error-handler');
 const router = new express.Router()
 const logger = require('../log/logging')
+const error = require('../util/error')
 
 router.post('/v1/users', async (req, res) => {
     const user = new User(req.body)
@@ -17,7 +18,7 @@ router.post('/v1/users', async (req, res) => {
         const token = await user.generateAuthToken()
         res.status(201).send({ user, token })
     } catch (e) {
-        res.status(400).send(e)
+        return error(res, 400, e.toString(), '/v1/users')
     }
 })
 
@@ -30,8 +31,7 @@ router.post('/v1/users/login', async (req, res) => {
         logger.info(user + "\n" + token)
         res.send({ user, token })
     }catch (e) {
-        res.status(400).send()
-        logger.error(e)
+        return error(res, 400, e.toString(), '/v1/users/login')
     }
     logger.info("-----Login [end]-----")
 })
@@ -45,7 +45,7 @@ router.post('/v1/users/logout', auth, async (req, res) => {
 
         res.send()
     } catch (e) {
-        res.status(500).send()
+        return error(res, 500, e.toString(), '/v1/users/logout')
     }
 })
 
@@ -55,7 +55,7 @@ router.post('/v1/users/logoutAll', auth, async (req, res) => {
         await req.user.save()
         res.send()
     } catch (e) {
-        res.status(500).send()
+        return error(res, 500, e.toString(), '/v1/users/logoutAll')
     }
 })
 
@@ -77,7 +77,7 @@ router.patch('/v1/users/me', auth, async (req, res) => {
         await req.user.save()
         res.send(req.user)
     } catch (e) {
-        res.status(400).send(e)
+        return error(res, 500, e.toString(), '/v1/users/me')
     }
 })
 
@@ -121,7 +121,7 @@ router.get('/v1/users/:id/avatar', async (req, res) => {
         res.set('Content-Type', 'image/png')
         res.send(user.avatar)
     } catch (e) {
-        res.status(404).send()
+        return error(res, 404, e.toString(), '/v1/users/:id/avatar')
     }
 })
 

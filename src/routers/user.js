@@ -24,6 +24,7 @@ router.post('/v1/users', async (req, res) => {
 router.post('/v1/users/login', async (req, res) => {
     logger.info("-----Login [start]-----")
     try {
+        logger.info(JSON.stringify(req.body))
         const user = await User.findByCredentials(req.body.email, req.body.password)
         const token = await user.generateAuthToken()
         logger.info(user + "\n" + token)

@@ -21,7 +21,8 @@
     "nexmo": "^2.9.1",
     "sharp": "^0.25.4",
     "twilio": "^3.49.0",
-    "validator": "^10.9.0"
+    "validator": "^10.9.0",
+    "winston": "^3.3.3"
   },
   "devDependencies": {
     "env-cmd": "^10.1.0",

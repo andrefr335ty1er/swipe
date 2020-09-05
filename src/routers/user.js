@@ -6,6 +6,7 @@ const auth = require('../middleware/auth')
 const { sendWelcomeEmail, sendCancelationEmail } = require('../emails/account')
 const mongooseErrorHandler = require('mongoose-error-handler');
 const router = new express.Router()
+const logger = require('../log/logging')
 
 router.post('/v1/users', async (req, res) => {
     const user = new User(req.body)
@@ -21,15 +22,17 @@ router.post('/v1/users', async (req, res) => {
 })
 
 router.post('/v1/users/login', async (req, res) => {
+    logger.info("-----Login [start]-----")
     try {
-        
         const user = await User.findByCredentials(req.body.email, req.body.password)
         const token = await user.generateAuthToken()
-        console.log(user + "" + token)
+        logger.info(user + "\n" + token)
         res.send({ user, token })
     }catch (e) {
         res.status(400).send()
+        logger.error(e)
     }
+    logger.info("-----Login [end]-----")
 })
 
 router.post('/v1/users/logout', auth, async (req, res) => {

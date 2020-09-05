@@ -26,6 +26,12 @@ const gangSchema = new mongoose.Schema({
     timestamps: true
 })
 
+gangSchema.virtual('expenses', {
+    ref: 'Expense',
+    localField: '_id',
+    foreignField: 'gang'
+})
+
 const Gang = mongoose.model('Gang', gangSchema)
 
 module.exports = Gang

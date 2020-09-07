@@ -25,11 +25,13 @@ const expenseSchema = new mongoose.Schema({
     },
     amount: {
         type: mongoose.Schema.Types.Decimal128,
-        required: true
+        required: [true, 'Amount of the expense is required']
     }
 }, {
     timestamps: true
 })
+
+expenseSchema.index({ name: 1, gang: 1 }, { unique: true })
 
 const Expense = mongoose.model('Expense', expenseSchema)
 

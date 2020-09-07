@@ -13,7 +13,7 @@ const userSchema = new mongoose.Schema({
     email: {
         type: String,
         unique: true,
-        required: true,
+        required: [true, 'Email address is required'],
         trim: true,
         lowercase: true,
         validate(value) {
@@ -24,7 +24,7 @@ const userSchema = new mongoose.Schema({
     },
     password: {
         type: String,
-        required: true,
+        required: [true, 'Password is required'],
         minlength: 7,
         trim: true,
         validate(value) {
@@ -38,7 +38,7 @@ const userSchema = new mongoose.Schema({
         trim: true,
         validate: /01\d{8,9}/,
         unique: true,
-        required: true
+        required: [true, 'Mobile number is required']
     },
     age: {
         type: Number,

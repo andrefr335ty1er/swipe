@@ -5,6 +5,7 @@ const auth = require('../middleware/auth')
 const authGang = require('../middleware/authGang')
 const error = require('../util/error')
 const { db } = require('../models/gang')
+const logger = require('../log/logging')
 
 router.post('/v1/gang', auth, async (req, res) => {
     const gang = new Gang(req.body)
@@ -14,6 +15,7 @@ router.post('/v1/gang', auth, async (req, res) => {
         await gang.save()
         res.status(201).send({ gang })
     } catch (e) {
+        logger.error(res, 400, e, '/v1/gang')
         res.status(400).send(e)
     }
 })
@@ -25,6 +27,7 @@ router.get('/v1/gangs', auth, async (req, res) => {
         }).execPopulate()
         res.send(req.user.gangs)
     } catch (e) {
+        logger.error(res, 500, e, '/v1/gangs')
         res.status(500).send()
     }
 })
@@ -34,7 +37,8 @@ router.get(getGangById, auth, authGang, async (req, res) => {
     try {
         res.send({ gang: req.gang })
     } catch (e) {
-       res.status(404).send(e)
+        logger.error(e)
+        error(res, 400, e.toString(), getGangById)
     }
 })
 
@@ -44,7 +48,8 @@ router.delete(getGangById, auth, authGang, async (req, res) => {
         res.send(deleted)
         
     } catch (e) {
-       error(res, 404, 'Resource not found', getGangById)
+        logger.error(e)
+        error(res, 400, e.toString(), getGangById)
     }
 })
 
@@ -57,6 +62,7 @@ router.patch(getGangById, auth, authGang, async (req, res) => {
     const isAdminExist = memberArray.includes(req.gang.admin.toString())
 
     if (!isValidOperation) {
+        logger.error('Invalid updates')
         return error(res, 400, 'Invalid updates!', getGangById)
     }
 

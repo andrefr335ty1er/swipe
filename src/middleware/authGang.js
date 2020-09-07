@@ -6,11 +6,11 @@ const authGang = async (req, res, next) => {
         const gang = await Gang.findById(req.params.id)
 
         if (!gang) {
-            return error(res, 404, 'Cant find any gang.', '')
+            throw new Error('Cant find any gang.')
         }
 
         if(!gang.members.includes(req.user._id)){
-            return error(res, 403, 'You are not a member of this gang', '')
+            throw new Error('You are not a member of this gang')
         }
 
         req.gang = gang

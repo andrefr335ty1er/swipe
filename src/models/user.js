@@ -33,7 +33,7 @@ const userSchema = new mongoose.Schema({
             }
         }
     },
-    mobileNum: {
+    mobile_number: {
         type: String,
         trim: true,
         validate: /01\d{8,9}/,

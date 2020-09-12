@@ -18,7 +18,7 @@ router.post('/v1/users', async (req, res) => {
 
     try {
         const existingEmail = await User.findOne({ email: user.email })
-        const existingMobileNum = await User.findOne({ mobileNum: user.mobileNum })
+        const existingMobileNum = await User.findOne({ mobile_number: user.mobile_number })
 
         if (existingEmail) {
             throw new Error('Email address has been taken')
@@ -36,7 +36,7 @@ router.post('/v1/users', async (req, res) => {
         res.status(201).send({ user, token })
     } catch (e) {
         logger.error(e)
-        return error(res, 400, e.toString(), '/v1/users')
+        return error(res, 400, e.toString(), req.method ,'/v1/users')
     }
     logger.info("-----Create User [end]-----")
 })
@@ -50,7 +50,7 @@ router.post('/v1/users/login', async (req, res) => {
         logger.info(user + "\n" + token)
         res.send({ user, token })
     } catch (e) {
-        return error(res, 400, e.toString(), '/v1/users/login')
+        return error(res, 400, e.toString(), req.method, '/v1/users/login')
     }
     logger.info("-----Login [end]-----")
 })
@@ -65,7 +65,7 @@ router.post('/v1/users/logout', auth, async (req, res) => {
 
         res.send()
     } catch (e) {
-        return error(res, 500, e.toString(), '/v1/users/logout')
+        return error(res, 500, e.toString(), req.method, '/v1/users/logout')
     }
     logger.info("-----Logout user [end]-----")
 })
@@ -77,7 +77,7 @@ router.post('/v1/users/logoutAll', auth, async (req, res) => {
         await req.user.save()
         res.send()
     } catch (e) {
-        return error(res, 500, e.toString(), '/v1/users/logoutAll')
+        return error(res, 500, e.toString(), req.method, '/v1/users/logoutAll')
     }
     logger.info("-----Logout user all [end]-----")
 })
@@ -89,22 +89,21 @@ router.get('/v1/users/me', auth, async (req, res) => {
 router.patch('/v1/users/me', auth, async (req, res) => {
     logger.info("-----Update user [start]-----")
 
-    const updates = Object.keys(req.body)
-    const allowedUpdates = ['name', 'email', 'password', 'age']
-    const isValidOperation = updates.every((update) => allowedUpdates.includes(update))
+    try{
+        const updates = Object.keys(req.body)
+        const allowedUpdates = ['name', 'email', 'password', 'age']
+        const isValidOperation = updates.every((update) => allowedUpdates.includes(update))
 
-    if (!isValidOperation) {
-        logger.error('Invalid updates')
-        return error(res, 400, 'Invalid updates', '/v1/users/me')
-    }
+        if (!isValidOperation) {
+            throw new Error('Invalid updates')
+        }
 
-    try {
         updates.forEach((update) => req.user[update] = req.body[update])
         await req.user.save()
         res.send(req.user)
     } catch (e) {
         logger.error(e.toString())
-        return error(res, 500, e.toString(), '/v1/users/me')
+        return error(res, 500, e.toString(), req.method, '/v1/users/me')
     }
     logger.info("-----Update user [end]-----")
 })
@@ -129,7 +128,7 @@ router.post('/v1/users/me/avatar', auth, upload.single('avatar'), async (req, re
     await req.user.save()
     res.send()
 }, (error, req, res, next) => {
-    return error(res, 400, error.message, '/v1/users/me/avatar')
+    return error(res, 400, error.message, req.method, '/v1/users/me/avatar')
 })
 
 router.delete('/v1/users/me/avatar', auth, async (req, res) => {
@@ -150,7 +149,7 @@ router.get('/v1/users/:id/avatar', async (req, res) => {
         res.send(user.avatar)
     } catch (e) {
         logger.error(e.toString())
-        return error(res, 404, e.toString(), '/v1/users/:id/avatar')
+        return error(res, 404, e.toString(), req.method, '/v1/users/:id/avatar')
     }
 })
 

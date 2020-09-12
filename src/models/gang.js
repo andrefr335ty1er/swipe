@@ -4,7 +4,7 @@ const validator = require('validator')
 const gangSchema = new mongoose.Schema({
     name: {
         type: String,
-        required: true,
+        required: [true, "An unique name is required for a gang"],
         trim: true,
         unique: true
     },
@@ -22,6 +22,10 @@ const gangSchema = new mongoose.Schema({
     },
     avatar: {
         type: Buffer
+    },
+    delete_flag: {
+        type: String,
+        default: 'N'
     }
 }, {
     timestamps: true
@@ -32,6 +36,18 @@ gangSchema.virtual('expenses', {
     localField: '_id',
     foreignField: 'gang'
 })
+
+gangSchema.methods.toJSON = function () {
+    const gang = this
+    const gangObject = gang.toObject()
+
+    delete gangObject.delete_flag
+    delete gangObject.createdAt
+    delete gangObject.updatedAt
+    delete gangObject.__v
+
+    return gangObject
+}
 
 const Gang = mongoose.model('Gang', gangSchema)
 

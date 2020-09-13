@@ -5,7 +5,6 @@ const path = require('path')
 const User = require('../models/user')
 const auth = require('../middleware/auth')
 const { sendWelcomeEmail, sendCancelationEmail } = require('../emails/account')
-const mongooseErrorHandler = require('mongoose-error-handler');
 const router = new express.Router()
 const logger = require('../log/logging')
 const error = require('../util/error')
@@ -18,12 +17,11 @@ router.post('/v1/users', async (req, res) => {
 
     try {
         const existingEmail = await User.findOne({ email: user.email })
-        const existingMobileNum = await User.findOne({ mobile_number: user.mobile_number })
-
         if (existingEmail) {
             throw new Error('Email address has been taken')
         }
 
+        const existingMobileNum = await User.findOne({ mobile_number: user.mobile_number })
         if (existingMobileNum) {
             throw new Error('Mobile number has been taken')
         }
@@ -50,6 +48,7 @@ router.post('/v1/users/login', async (req, res) => {
         logger.info(user + "\n" + token)
         res.send({ user, token })
     } catch (e) {
+        logger.error(e)
         return error(res, 400, e.toString(), req.method, '/v1/users/login')
     }
     logger.info("-----Login [end]-----")
@@ -103,7 +102,7 @@ router.patch('/v1/users/me', auth, async (req, res) => {
         res.send(req.user)
     } catch (e) {
         logger.error(e.toString())
-        return error(res, 500, e.toString(), req.method, '/v1/users/me')
+        return error(res, 400, e.toString(), req.method, '/v1/users/me')
     }
     logger.info("-----Update user [end]-----")
 })
@@ -115,7 +114,7 @@ const upload = multer({
     },
     fileFilter(req, file, cb) {
         if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
-            return cb(new Error('Please upload an image'))
+            return cb(new Error('Please upload an image. Formats allowed are jgp/jpeg/png'))
         }
 
         cb(undefined, true)
@@ -123,26 +122,39 @@ const upload = multer({
 })
 
 router.post('/v1/users/me/avatar', auth, upload.single('avatar'), async (req, res) => {
-    const buffer = await sharp(req.file.buffer).resize({ width: 250, height: 250 }).png().toBuffer()
-    req.user.avatar = buffer
-    await req.user.save()
-    res.send()
-}, (error, req, res, next) => {
-    return error(res, 400, error.message, req.method, '/v1/users/me/avatar')
+    logger.info("-----Create user avatar [start]-----")
+    try{
+        if(req.file !== undefined){
+            const buffer = await sharp(req.file.buffer).resize({ width: 250, height: 250 }).png().toBuffer()
+            req.user.avatar = buffer
+            await req.user.save()
+            res.send()
+        }else{
+            throw new Error("No file is uploaded")
+        }
+    }catch(e){
+        return error(res, 400, e.toString(), req.method, '/v1/users/me/avatar')
+    }
+    logger.info("-----Create user avatar [end]-----")
+}, (err, req, res, next) => {
+    return error(res, 400, err.message, req.method, '/v1/users/me/avatar')
 })
 
 router.delete('/v1/users/me/avatar', auth, async (req, res) => {
+    logger.info("-----Delete user avatar [start]-----")
     req.user.avatar = undefined
     await req.user.save()
-    res.send()
+    res.send("Delete successfully")
+    logger.info("-----Delete user avatar [end]-----")
 })
 
 router.get('/v1/users/:id/avatar', async (req, res) => {
+    logger.info("-----Get user avatar [start]-----")
     try {
         const user = await User.findById(req.params.id)
 
         if (!user || !user.avatar) {
-            throw new Error()
+            throw new Error("Could not locate the resource")
         }
 
         res.set('Content-Type', 'image/png')
@@ -151,6 +163,7 @@ router.get('/v1/users/:id/avatar', async (req, res) => {
         logger.error(e.toString())
         return error(res, 404, e.toString(), req.method, '/v1/users/:id/avatar')
     }
+    logger.info("-----Get user avatar [end]-----")
 })
 
 module.exports = router

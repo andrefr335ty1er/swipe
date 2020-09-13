@@ -1,0 +1,42 @@
+
+1. What does your product, and your company, actually do. 
+What does it do for them? How do they interact with it? What’s unique about it compared to other products in the market? 
+
+2. Identify the pain points. 
+Put the investors in the shoes of a customer and help explain why they need a product like yours.
+
+3. Identify your customer. 
+This may sound straightforward, but you want to be as detailed as possible. Are you starting with a narrow customer base, or creating a broad product that can touch many different demographics? What are the needs of that customer? What do they look like?
+
+4. Talk about some additional benefits your product generates. 
+If you collect data, what does that data allow you to do? Can it help you expand into new markets? 
+Does it just help improve the product? Could the data itself turn into a second line of business?
+
+5. Lay out barriers to entry and how you will overcome them. 
+You have to show why you’ll be able to get past larger incumbents and why you are uniquely positioned to do that. 
+You’ll also need to cover any additional risks you might run into along the way.
+
+
+6. Dig into the mechanics. 
+Lay out your core technology and what makes it superior to others on the market. 
+Show early feedback on prototypes if you have them. 
+If you’re more mature, show some results: studies, evidence of how effective it is, and research that backs up your claims.
+
+7. The value proposition. 
+You want to show how you’re going to actually create value.
+Have a deep competitive market analysis to provide some reference points. 
+List out recent exits, M&A, funding rounds, earnings releases, and as much data as you can collect that provides some directional accuracy for your future value.
+
+8. Pathway through regulation. 
+Talk about how long it will take to get your product to the market, and what hurdles you’ll have to get through. 
+Include any regulatory routes you have to take, and how long it will take to get approved — as well as any curveballs that might come up.
+
+9. Dig into the metrics. If you have them in front of you, lay them out as clearly as you can. E.g. 
+Customer acquisition cost (CAC): How are you acquiring customers, and how much does it cost to acquire a customer?
+Lifetime Value (LTV): How much revenue are you generating from that customer you acquired.
+Churn: How do you define the rate at which customers are leaving, and what is that rate?
+Licensing: If you license your technology, talk about the terms and any revenue or fees.
+Projections: You’ll want to lay out (reasonable) projections for your revenue for the next few years or so to show you’re on a solid path to growth.
+
+10. Walk through your costs and key requirements. 
+Partnerships: you’ve probably decided to cooperate with a few companies that are producing a kind of win-win situation. This can take a lot of forms, such as relationships with suppliers or vendors that you can amplify to a broader audience.

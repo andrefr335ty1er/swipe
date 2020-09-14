@@ -59,6 +59,7 @@ beforeEach(async () => {
     await User.deleteMany()
     await new User(userOne).save()
     await new User(userTwo).save()
+    await new User(userThree).save()
     await new Gang(gang).save()
 })
 
@@ -130,6 +131,8 @@ test('Should not get gang details if unauthenticated', async () => {
         .get(`/v1/gangs/${gang._id}`)
         .send()
         .expect(401)
+    
+    expect(response.body.description).toEqual('Please authenticate.')
 })
 
 test('Should not get gang details if user not member of the gang', async () => {
@@ -139,5 +142,16 @@ test('Should not get gang details if user not member of the gang', async () => {
         .send()
         .expect(401)
 
-    logger.info("This is the response " + response.body.toString())
+    expect(response.body.description).toEqual('You are not a member of this gang')
+})
+
+test('Should delete gang successfully', async () => {
+    const response = await request(app)
+        .delete(`/v1/gangs/${gang._id}`)
+        .set('Authorization', `Bearer ${userOne.tokens[0].token}`)
+        .send()
+        .expect(200)
+
+    const deleted = await Gang.findById(gang._id)
+    expect(deleted.delete_flag).toEqual('Y')
 })

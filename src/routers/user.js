@@ -8,6 +8,8 @@ const { sendWelcomeEmail, sendCancelationEmail } = require('../emails/account')
 const router = new express.Router()
 const logger = require('../log/logging')
 const error = require('../util/error')
+const genReferralCode = require('../util/genReferralCode')
+const Referral = require('../models/referral')
 const originPath = __filename.replace(path.dirname(__dirname), '')
 
 router.post('/v1/users', async (req, res) => {
@@ -29,6 +31,13 @@ router.post('/v1/users', async (req, res) => {
         await user.save()
         logger.info("Finish saving user")
 
+        const referral_code = genReferralCode()
+        const referral = new Referral({
+            user: user._id,
+            referral_code
+        })
+
+        referral.save()
         //sendWelcomeEmail(user.email, user.name)
         const token = await user.generateAuthToken()
         res.status(201).send({ user, token })

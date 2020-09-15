@@ -36,7 +36,7 @@ const userSchema = new mongoose.Schema({
     mobile_number: {
         type: String,
         trim: true,
-        validate: /01\d{8,9}/,
+        validate: [/01\d{8,9}/, 'Please provide a valid mobile number'],
         unique: true,
         required: [true, 'Mobile number is required']
     },
